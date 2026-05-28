@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عربي — Arab Tili O'rganish</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sand: #f5efe6;
+  --gold: #c9903a;
+  --gold-light: #e8b96a;
+  --deep: #1a1008;
+  --ink: #2d1f0e;
+  --teal: #1a7a6e;
+  --teal-light: #25a394;
+  --rose: #c0392b;
+  --card: #fffdf8;
+  --shadow: rgba(30,15,5,0.13);
+  --streak: #e67e22;
+  --dark-bg: #111;
+  --dark-card: #1e1e1e;
+  --dark-ink: #f0e8d8;
+  --dark-border: rgba(201,144,58,0.2);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--sand);
+  font-family: 'Nunito', sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 10%, rgba(201,144,58,0.13) 0%, transparent 60%),
+    radial-gradient(ellipse at 90% 90%, rgba(26,122,110,0.10) 0%, transparent 60%);
+  transition: background 0.3s, color 0.3s;
+}
+body.dark {
+  background: var(--dark-bg);
+  color: var(--dark-ink);
+  background-image: none;
+}
+body.dark .card, body.dark .word-card, body.dark .letter-card,
+body.dark .quiz-opt, body.dark .stat-box, body.dark .chart-wrap,
+body.dark .fc-front { background: var(--dark-card); border-color: var(--dark-border); }
+body.dark .chat-wrap { background: var(--dark-card); }
+body.dark .msg.ai { background: #2a2a2a; color: var(--dark-ink); }
+body.dark .chat-input { background: #2a2a2a; color: var(--dark-ink); border-color: var(--dark-border); }
+body.dark .chat-input-row { background: #1e1e1e; }
+body.dark select { background: #2a2a2a; color: var(--dark-ink); }
+body.dark .tabs { border-bottom-color: var(--dark-border); }
+body.dark .tab-btn:hover:not(.active) { color: #ccc; }
+body.dark .word-uz { color: var(--teal-light); }
+body.dark .stat-label { color: #999; }
+
+/* ONBOARDING */
+.onboarding-overlay {
+  position:fixed; inset:0; background:rgba(26,16,8,0.92);
+  z-index:9999; display:flex; align-items:center; justify-content:center;
+  padding:20px;
+}
+.onboarding-overlay.hidden { display:none; }
+.onboarding-box {
+  background:var(--card); border-radius:24px; padding:36px 32px;
+  max-width:420px; width:100%; text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
+.onboarding-emoji { font-size:4rem; margin-bottom:12px; }
+.onboarding-box h2 { font-size:1.6rem; font-weight:800; color:var(--deep); margin-bottom:8px; }
+.onboarding-box p { color:#777; font-size:0.9rem; line-height:1.6; margin-bottom:20px; }
+.onboarding-name { width:100%; padding:12px 16px; border:2px solid rgba(201,144,58,0.3); border-radius:12px; font-family:'Nunito',sans-serif; font-size:1rem; outline:none; margin-bottom:16px; text-align:center; color:var(--ink); }
+.onboarding-name:focus { border-color:var(--gold); }
+.onboarding-steps { display:flex; flex-direction:column; gap:10px; margin-bottom:24px; text-align:left; }
+.onboarding-step { display:flex; align-items:center; gap:12px; padding:10px 14px; background:rgba(201,144,58,0.08); border-radius:12px; font-size:0.88rem; font-weight:700; }
+.onboarding-step span:first-child { font-size:1.4rem; }
+
+/* LEVELUP POPUP */
+.levelup-popup {
+  position:fixed; top:80px; left:50%; transform:translateX(-50%) translateY(-20px);
+  background:linear-gradient(135deg,#c9903a,#e8b96a);
+  color:var(--deep); padding:16px 28px; border-radius:50px;
+  font-weight:800; font-size:1rem; z-index:1000;
+  box-shadow:0 8px 32px rgba(201,144,58,0.5);
+  opacity:0; pointer-events:none; white-space:nowrap;
+  transition: all 0.4s;
+}
+.levelup-popup.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* HEADER */
+header {
+  background: var(--deep);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  position: sticky; top:0; z-index:100;
+  flex-wrap: wrap; gap: 8px;
+}
+.logo { display:flex; align-items:center; gap:12px; }
+.logo-arabic { font-family:'Amiri',serif; font-size:1.8rem; color:var(--gold); line-height:1; }
+.logo-text { color:#fff; font-weight:700; font-size:0.95rem; line-height:1.3; }
+.logo-text span { display:block; color:var(--gold-light); font-size:0.72rem; font-weight:400; }
+.header-right { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.xp-badge { background:var(--gold); color:var(--deep); font-weight:800; padding:5px 12px; border-radius:20px; font-size:0.82rem; }
+.streak-badge { background:var(--streak); color:#fff; font-weight:800; padding:5px 12px; border-radius:20px; font-size:0.82rem; display:flex; align-items:center; gap:4px; }
+.level-badge { background:linear-gradient(135deg,#8e44ad,#9b59b6); color:#fff; font-weight:800; padding:5px 12px; border-radius:20px; font-size:0.82rem; }
+.dark-toggle { background:rgba(255,255,255,0.1); border:none; color:#fff; border-radius:20px; padding:5px 12px; cursor:pointer; font-size:0.85rem; }
+
+/* TABS */
+.tabs {
+  display:flex; gap:0;
+  padding: 18px 20px 0;
+  border-bottom: 2px solid rgba(201,144,58,0.2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  background:inherit;
+}
+.tabs::-webkit-scrollbar { display:none; }
+.tab-btn {
+  background:none; border:none;
+  padding: 9px 15px;
+  font-family:'Nunito',sans-serif; font-size:0.84rem; font-weight:700;
+  color:#999; cursor:pointer;
+  border-bottom:3px solid transparent; margin-bottom:-2px;
+  transition:all 0.2s; white-space:nowrap;
+}
+.tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); }
+.tab-btn:hover:not(.active) { color:var(--ink); }
+
+main { max-width:860px; margin:0 auto; padding:24px 18px 80px; }
+
+.section-title { font-size:1.25rem; font-weight:800; color:var(--deep); margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+body.dark .section-title { color: var(--gold-light); }
+
+.card {
+  background:var(--card); border-radius:16px;
+  box-shadow:0 4px 20px var(--shadow);
+  padding:22px; margin-bottom:16px;
+  border:1px solid rgba(201,144,58,0.15);
+}
+
+/* LEVEL BAR */
+.level-section { margin-bottom:16px; }
+.level-bar-wrap { background:rgba(201,144,58,0.15); border-radius:10px; height:10px; overflow:hidden; margin-top:6px; }
+.level-bar { height:100%; background:linear-gradient(90deg,var(--gold),var(--teal)); border-radius:10px; transition:width 0.5s ease; }
+.level-info { display:flex; justify-content:space-between; align-items:center; }
+.level-name { font-weight:800; font-size:0.95rem; color:var(--gold); }
+.level-xp-needed { font-size:0.78rem; color:#888; }
+
+/* STREAK BANNER */
+.streak-banner {
+  background: linear-gradient(135deg, #e67e22, #f39c12);
+  border-radius:16px; padding:18px 22px;
+  margin-bottom:16px; color:#fff;
+  display:flex; align-items:center; justify-content:space-between;
+  box-shadow:0 4px 20px rgba(230,126,34,0.3);
+  flex-wrap:wrap; gap:12px;
+}
+.streak-info { display:flex; align-items:center; gap:14px; }
+.streak-flame { font-size:2.2rem; line-height:1; }
+.streak-text h3 { font-size:1.1rem; font-weight:800; }
+.streak-text p { font-size:0.8rem; opacity:0.85; margin-top:2px; }
+.streak-days { display:flex; gap:5px; }
+.streak-day {
+  width:30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,0.2); display:flex;
+  align-items:center; justify-content:center;
+  font-size:0.65rem; font-weight:800; flex-direction:column;
+}
+.streak-day.done { background:rgba(255,255,255,0.9); color:var(--streak); }
+.streak-day.today { background:#fff; color:var(--streak); box-shadow:0 0 0 3px rgba(255,255,255,0.5); }
+
+/* DAILY TASKS */
+.daily-tasks { margin-bottom:16px; }
+.task-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 14px; border-radius:12px;
+  background:rgba(201,144,58,0.06); margin-bottom:8px;
+  border:1px solid rgba(201,144,58,0.15);
+  transition:all 0.2s;
+}
+.task-item.done { background:rgba(26,122,110,0.08); border-color:rgba(26,122,110,0.2); }
+.task-icon { font-size:1.2rem; width:28px; text-align:center; }
+.task-text { flex:1; }
+.task-name { font-weight:700; font-size:0.9rem; }
+.task-item.done .task-name { color:var(--teal); text-decoration:line-through; opacity:0.7; }
+.task-xp { font-size:0.72rem; color:#aaa; margin-top:2px; }
+.task-check { font-size:1.1rem; }
+.task-progress-wrap { height:5px; background:rgba(201,144,58,0.15); border-radius:5px; margin-top:5px; overflow:hidden; }
+.task-progress-bar { height:100%; background:var(--teal); border-radius:5px; transition:width 0.4s; }
+
+/* STATS */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+.stat-box {
+  background:var(--card); border-radius:14px; padding:14px 10px;
+  text-align:center; box-shadow:0 3px 12px var(--shadow);
+  border:1px solid rgba(201,144,58,0.12);
+}
+.stat-num { font-size:1.7rem; font-weight:800; color:var(--gold); line-height:1; }
+.stat-label { font-size:0.68rem; color:#888; font-weight:700; margin-top:4px; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* CHART */
+.chart-wrap { background:var(--card); border-radius:16px; padding:22px; box-shadow:0 4px 20px var(--shadow); border:1px solid rgba(201,144,58,0.15); margin-bottom:16px; }
+.chart-title { font-weight:800; font-size:0.95rem; margin-bottom:14px; color:var(--deep); }
+body.dark .chart-title { color:var(--gold-light); }
+.bar-chart { display:flex; align-items:flex-end; gap:8px; height:110px; }
+.bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.bar { width:100%; border-radius:8px 8px 0 0; background:linear-gradient(to top, var(--teal), var(--gold)); min-height:4px; transition:height 0.6s ease; }
+.bar-val { font-size:0.68rem; font-weight:800; color:var(--gold); }
+.bar-day { font-size:0.65rem; color:#aaa; font-weight:700; }
+.progress-ring-wrap { display:flex; justify-content:center; gap:28px; margin-top:18px; flex-wrap:wrap; }
+.ring-item { text-align:center; }
+.ring-label { font-size:0.75rem; color:#888; font-weight:700; margin-top:6px; text-transform:uppercase; }
+svg.ring circle { transition:stroke-dashoffset 0.8s ease; }
+
+/* ALPHABET */
+.alphabet-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(82px,1fr)); gap:9px; }
+.letter-card {
+  background:var(--card); border:2px solid rgba(201,144,58,0.2);
+  border-radius:14px; padding:11px 5px; text-align:center;
+  cursor:pointer; transition:all 0.2s;
+  box-shadow:0 2px 8px var(--shadow); user-select:none;
+}
+.letter-card:hover { border-color:var(--gold); transform:translateY(-3px); box-shadow:0 8px 20px rgba(201,144,58,0.2); }
+.letter-card.active { border-color:var(--teal); background:rgba(26,122,110,0.07); }
+.letter-card.learned { border-color:var(--gold); background:rgba(201,144,58,0.06); }
+.letter-arabic { font-family:'Amiri',serif; font-size:1.9rem; color:var(--deep); line-height:1.2; display:block; }
+body.dark .letter-arabic { color:var(--gold-light); }
+.letter-name { font-size:0.65rem; color:#888; font-weight:700; margin-top:2px; text-transform:uppercase; letter-spacing:0.5px; }
+.letter-check { font-size:0.62rem; color:var(--gold); margin-top:2px; }
+
+/* LETTER DETAIL */
+.letter-detail {
+  background:linear-gradient(135deg,var(--deep) 0%, #2d1f0e 100%);
+  border-radius:18px; padding:26px; margin-bottom:20px;
+  color:#fff; display:none; animation:fadeIn 0.3s ease;
+}
+.letter-detail.show { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+.detail-big { font-family:'Amiri',serif; font-size:5rem; color:var(--gold); text-align:center; margin-bottom:12px; line-height:1; }
+.detail-info { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; text-align:center; }
+.detail-box { background:rgba(255,255,255,0.08); border-radius:12px; padding:10px 8px; }
+.detail-box .label { font-size:0.65rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.detail-box .value { font-family:'Amiri',serif; font-size:1.4rem; color:var(--gold-light); }
+.detail-box .value.latin { font-family:'Nunito',sans-serif; font-size:0.95rem; color:#fff; font-weight:700; }
+
+/* CANVAS */
+.stroke-canvas-wrap { text-align:center; margin:18px 0 0; }
+.stroke-canvas { border:2px solid rgba(201,144,58,0.3); border-radius:16px; background:#fff; cursor:crosshair; touch-action:none; }
+.stroke-controls { display:flex; gap:8px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
+
+/* BUTTONS */
+.btn { border:none; border-radius:50px; padding:10px 20px; font-family:'Nunito',sans-serif; font-weight:800; font-size:0.86rem; cursor:pointer; transition:all 0.2s; }
+.btn-gold { background:var(--gold); color:var(--deep); }
+.btn-gold:hover { background:var(--gold-light); transform:scale(1.05); }
+.btn-teal { background:var(--teal); color:#fff; }
+.btn-teal:hover { background:var(--teal-light); }
+.btn-outline { background:transparent; color:var(--ink); border:2px solid rgba(201,144,58,0.3); }
+body.dark .btn-outline { color:var(--dark-ink); }
+.btn-outline:hover { border-color:var(--gold); }
+.btn-sm { padding:7px 14px; font-size:0.78rem; }
+.btn-fav { background:transparent; border:none; font-size:1.2rem; cursor:pointer; transition:transform 0.2s; padding:4px; }
+.btn-fav:hover { transform:scale(1.3); }
+
+/* VOICE */
+.voice-wrap { text-align:center; padding:10px 0 0; }
+.mic-btn { width:76px; height:76px; border-radius:50%; background:var(--deep); border:4px solid var(--gold); font-size:1.9rem; cursor:pointer; transition:all 0.3s; display:inline-flex; align-items:center; justify-content:center; margin:0 auto; }
+.mic-btn.listening { background:var(--rose); border-color:var(--rose); animation:micPulse 1s infinite; box-shadow:0 0 0 12px rgba(192,57,43,0.2); }
+@keyframes micPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+.voice-feedback { margin-top:14px; padding:12px 18px; border-radius:12px; font-weight:700; font-size:0.92rem; display:none; }
+.voice-feedback.show { display:block; }
+.voice-feedback.success { background:rgba(26,122,110,0.1); color:var(--teal); }
+.voice-feedback.fail { background:rgba(192,57,43,0.1); color:var(--rose); }
+.voice-target { font-family:'Amiri',serif; font-size:3.2rem; color:var(--deep); text-align:center; direction:rtl; margin:10px 0 4px; line-height:1; }
+body.dark .voice-target { color:var(--gold-light); }
+.voice-hint { text-align:center; color:#888; font-size:0.83rem; margin-bottom:14px; }
+
+/* WORDS */
+.search-wrap { position:relative; margin-bottom:14px; }
+.search-input { width:100%; padding:11px 40px 11px 16px; border:2px solid rgba(201,144,58,0.25); border-radius:14px; font-family:'Nunito',sans-serif; font-size:0.92rem; outline:none; background:#fff; color:var(--ink); transition:border-color 0.2s; }
+body.dark .search-input { background:#2a2a2a; color:var(--dark-ink); border-color:var(--dark-border); }
+.search-input:focus { border-color:var(--gold); }
+.search-icon { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#aaa; pointer-events:none; }
+.words-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:12px; }
+.word-card {
+  background:var(--card); border:2px solid rgba(201,144,58,0.15);
+  border-radius:16px; padding:16px; text-align:center;
+  cursor:pointer; transition:all 0.25s;
+  box-shadow:0 3px 12px var(--shadow); position:relative; overflow:hidden;
+}
+.word-card::before { content:''; position:absolute; top:0;left:0;right:0; height:4px; background:linear-gradient(90deg,var(--gold),var(--teal)); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
+.word-card:hover::before { transform:scaleX(1); }
+.word-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 10px 28px rgba(201,144,58,0.2); }
+.word-card.favorited { border-color:var(--rose); }
+.word-fav-btn { position:absolute; top:8px; right:8px; background:none; border:none; font-size:1rem; cursor:pointer; opacity:0.4; transition:opacity 0.2s; }
+.word-card:hover .word-fav-btn, .word-card.favorited .word-fav-btn { opacity:1; }
+.word-arabic { font-family:'Amiri',serif; font-size:1.8rem; color:var(--deep); display:block; margin-bottom:6px; direction:rtl; }
+body.dark .word-arabic { color:var(--gold-light); }
+.word-trans { font-size:0.72rem; color:#888; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; margin-bottom:3px; }
+.word-uz { font-size:0.95rem; font-weight:800; color:var(--teal); }
+.word-pronun { font-size:0.75rem; color:#aaa; margin-top:3px; font-style:italic; }
+
+/* SENTENCES */
+.sentence-card { background:var(--card); border-radius:16px; padding:18px 20px; margin-bottom:12px; border:1px solid rgba(201,144,58,0.15); box-shadow:0 3px 12px var(--shadow); cursor:pointer; transition:all 0.2s; }
+.sentence-card:hover { border-color:var(--gold); transform:translateY(-2px); }
+.sentence-ar { font-family:'Amiri',serif; font-size:1.6rem; direction:rtl; text-align:right; color:var(--deep); margin-bottom:8px; line-height:1.4; }
+body.dark .sentence-ar { color:var(--gold-light); }
+.sentence-uz { font-weight:700; color:var(--teal); margin-bottom:4px; }
+.sentence-pr { font-size:0.82rem; color:#aaa; font-style:italic; }
+
+/* FLASHCARD */
+.flashcard-wrap { perspective:1000px; margin-bottom:18px; }
+.flashcard { width:100%; min-height:220px; position:relative; transform-style:preserve-3d; transition:transform 0.6s ease; cursor:pointer; }
+.flashcard.flipped { transform:rotateY(180deg); }
+.fc-front, .fc-back { position:absolute; inset:0; backface-visibility:hidden; border-radius:20px; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px; box-shadow:0 8px 32px var(--shadow); }
+.fc-front { background:linear-gradient(135deg, var(--deep), #3d2a14); color:#fff; }
+.fc-back { background:linear-gradient(135deg, var(--teal), #0f5a51); color:#fff; transform:rotateY(180deg); }
+.fc-arabic { font-family:'Amiri',serif; font-size:3.5rem; color:var(--gold); direction:rtl; line-height:1.1; }
+.fc-hint { font-size:0.78rem; opacity:0.5; margin-top:10px; }
+.fc-uz { font-size:1.6rem; font-weight:800; }
+.fc-pronun { font-size:0.95rem; opacity:0.7; margin-top:7px; font-style:italic; }
+.fc-tap { font-size:0.78rem; opacity:0.4; margin-top:14px; }
+.fc-controls { display:flex; gap:10px; justify-content:center; }
+.fc-result-row { display:flex; gap:10px; justify-content:center; margin-top:14px; }
+.fc-counter { text-align:center; margin-bottom:14px; }
+.fc-counter-num { font-size:0.95rem; font-weight:800; color:var(--gold); }
+.fc-counter-total { font-size:0.82rem; color:#888; }
+.fc-progress { height:6px; background:rgba(201,144,58,0.15); border-radius:10px; margin-bottom:18px; overflow:hidden; }
+.fc-progress-bar { height:100%; background:linear-gradient(90deg,var(--gold),var(--teal)); border-radius:10px; transition:width 0.4s ease; }
+
+/* QUIZ */
+.quiz-question { font-size:1.6rem; font-family:'Amiri',serif; text-align:center; color:var(--deep); padding:20px; background:linear-gradient(135deg,#fffdf8,#f5efe6); border-radius:16px; margin-bottom:16px; border:2px solid rgba(201,144,58,0.2); direction:rtl; }
+body.dark .quiz-question { background:var(--dark-card); color:var(--gold-light); }
+.quiz-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.quiz-opt { background:var(--card); border:2px solid rgba(201,144,58,0.2); border-radius:14px; padding:13px 10px; font-family:'Nunito',sans-serif; font-size:0.92rem; font-weight:700; cursor:pointer; transition:all 0.2s; text-align:center; color:var(--ink); }
+.quiz-opt:hover:not(:disabled) { border-color:var(--gold); background:rgba(201,144,58,0.08); }
+.quiz-opt.correct { background:rgba(26,122,110,0.12); border-color:var(--teal); color:var(--teal); }
+.quiz-opt.wrong { background:rgba(192,57,43,0.1); border-color:var(--rose); color:var(--rose); }
+.quiz-opt:disabled { cursor:not-allowed; }
+.quiz-result { text-align:center; padding:16px; border-radius:14px; margin-top:12px; font-weight:800; font-size:0.95rem; display:none; }
+.quiz-result.show { display:block; }
+.quiz-result.correct { background:rgba(26,122,110,0.1); color:var(--teal); }
+.quiz-result.wrong { background:rgba(192,57,43,0.08); color:var(--rose); }
+.score-display { text-align:center; margin-bottom:18px; }
+.score-num { font-size:2.2rem; font-weight:800; color:var(--gold); }
+.score-label { font-size:0.8rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+
+/* CHAT */
+.chat-wrap { background:var(--card); border-radius:18px; box-shadow:0 4px 20px var(--shadow); overflow:hidden; border:1px solid rgba(201,144,58,0.15); }
+.chat-header { background:var(--deep); padding:13px 20px; color:#fff; font-weight:700; display:flex; align-items:center; gap:10px; }
+.ai-dot { width:9px;height:9px;background:#4caf50;border-radius:50%;animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.chat-messages { padding:16px; min-height:240px; max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
+.msg { max-width:82%; padding:10px 14px; border-radius:16px; font-size:0.9rem; line-height:1.6; animation:fadeIn 0.3s ease; }
+.msg.user { background:var(--teal); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; }
+.msg.ai { background:#f0ece4; color:var(--ink); align-self:flex-start; border-bottom-left-radius:4px; }
+.typing { display:flex; gap:5px; align-items:center; padding:12px 16px; background:#f0ece4; border-radius:16px; border-bottom-left-radius:4px; align-self:flex-start; width:fit-content; }
+.typing span { width:7px;height:7px;background:var(--gold);border-radius:50%;animation:bounce 1.2s infinite; }
+.typing span:nth-child(2){animation-delay:0.2s} .typing span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-8px)} }
+.chat-input-row { display:flex; gap:8px; padding:12px 16px; border-top:1px solid rgba(201,144,58,0.15); background:#fffdf8; }
+.chat-input { flex:1; border:2px solid rgba(201,144,58,0.25); border-radius:12px; padding:10px 14px; font-family:'Nunito',sans-serif; font-size:0.9rem; outline:none; background:#fff; transition:border-color 0.2s; }
+.chat-input:focus { border-color:var(--gold); }
+.send-btn { background:var(--teal); color:#fff; border:none; border-radius:12px; padding:10px 16px; font-family:'Nunito',sans-serif; font-weight:700; cursor:pointer; transition:all 0.2s; font-size:1rem; }
+.send-btn:hover { background:var(--teal-light); }
+.send-btn:disabled { opacity:0.5; cursor:not-allowed; }
+.quick-topics { display:flex; flex-wrap:wrap; gap:6px; padding:9px 16px; border-top:1px solid rgba(201,144,58,0.1); }
+.topic-chip { background:rgba(201,144,58,0.12); color:var(--gold); border:1px solid rgba(201,144,58,0.3); border-radius:20px; padding:4px 12px; font-size:0.76rem; font-weight:700; cursor:pointer; transition:all 0.2s; font-family:'Nunito',sans-serif; }
+.topic-chip:hover { background:var(--gold); color:#fff; border-color:var(--gold); }
+
+/* ACHIEVEMENTS */
+.achievement-item { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid rgba(201,144,58,0.1); }
+.ach-icon { font-size:1.7rem; width:38px; text-align:center; }
+.ach-title { font-weight:800; font-size:0.87rem; }
+.ach-desc { font-size:0.76rem; color:#888; }
+
+/* LEADERBOARD */
+.leader-item { display:flex; align-items:center; gap:12px; padding:12px 14px; background:rgba(201,144,58,0.06); border-radius:14px; margin-bottom:8px; border:1px solid rgba(201,144,58,0.12); }
+.leader-rank { font-size:1.3rem; width:32px; text-align:center; }
+.leader-name { flex:1; font-weight:800; }
+.leader-xp { font-weight:800; color:var(--gold); }
+.leader-item.me { background:rgba(201,144,58,0.15); border-color:var(--gold); }
+
+/* SPACED REPETITION indicator */
+.srs-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.65rem; font-weight:800; margin-left:6px; }
+.srs-new { background:rgba(26,122,110,0.15); color:var(--teal); }
+.srs-review { background:rgba(201,144,58,0.15); color:var(--gold); }
+.srs-hard { background:rgba(192,57,43,0.15); color:var(--rose); }
+
+select { width:100%; padding:10px 14px; border:2px solid rgba(201,144,58,0.3); border-radius:12px; font-family:'Nunito',sans-serif; font-size:0.9rem; font-weight:700; color:var(--ink); background:#fff; outline:none; cursor:pointer; }
+
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+@media(max-width:600px){
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .quiz-options{grid-template-columns:1fr;}
+  .words-grid{grid-template-columns:repeat(2,1fr);}
+  .tabs{padding:14px 10px 0;}
+  main{padding:16px 10px 70px;}
+  header{padding:10px 12px;}
+  .fc-arabic{font-size:2.8rem;}
+  .header-right .level-badge { display:none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div class="onboarding-overlay" id="onboarding">
+  <div class="onboarding-box">
+    <div class="onboarding-emoji">🌙</div>
+    <h2>Arab Tiliga Xush Kelibsiz!</h2>
+    <p>Ismingizni kiriting va o'rganishni boshlang. Kunlik mashqlar bilan arabchani tez o'rganasiz!</p>
+    <input class="onboarding-name" id="nameInput" type="text" placeholder="Ismingiz..." maxlength="20">
+    <div class="onboarding-steps">
+      <div class="onboarding-step"><span>🔤</span><span>28 ta arab harfini o'rganing</span></div>
+      <div class="onboarding-step"><span>📚</span><span>200+ so'z va jumlalar</span></div>
+      <div class="onboarding-step"><span>🤖</span><span>AI ustoz bilan mashq qiling</span></div>
+      <div class="onboarding-step"><span>🏆</span><span>Level oling va yuqoriga chiqing</span></div>
+    </div>
+    <button class="btn btn-gold" style="width:100%;font-size:1rem;padding:14px;" onclick="startApp()">▶ Boshlash</button>
+  </div>
+</div>
+
+<!-- LEVEL UP POPUP -->
+<div class="levelup-popup" id="levelupPopup">🎉 Yangi daraja!</div>
+
+<header>
+  <div class="logo">
+    <div class="logo-arabic">عربي</div>
+    <div class="logo-text">Arab Tili <span id="userName">AI yordamida o'rgan</span></div>
+  </div>
+  <div class="header-right">
+    <div class="level-badge" id="levelBadge">⭐ 1-daraja</div>
+    <div class="streak-badge">🔥 <span id="streakCount">0</span></div>
+    <div class="xp-badge" id="xpBadge">0 XP</div>
+    <button class="dark-toggle" onclick="toggleDark()" id="darkBtn">🌙</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active"  onclick="showTab('home',this)">🏠 Bosh</button>
+  <button class="tab-btn" onclick="showTab('alphabet',this)">🔤 Alifbo</button>
+  <button class="tab-btn" onclick="showTab('words',this)">📚 So'zlar</button>
+  <button class="tab-btn" onclick="showTab('sentences',this)">💬 Jumlalar</button>
+  <button class="tab-btn" onclick="showTab('flashcard',this)">🃏 Flashcard</button>
+  <button class="tab-btn" onclick="showTab('voice',this)">🎙️ Ovoz</button>
+  <button class="tab-btn" onclick="showTab('quiz',this)">🎯 Test</button>
+  <button class="tab-btn" onclick="showTab('stats',this)">📊 Statistika</button>
+  <button class="tab-btn" onclick="showTab('chat',this)">🤖 Ustoz</button>
+</div>
+
+<main>
+
+<!-- HOME TAB -->
+<div class="tab-content active" id="tab-home">
+
+  <!-- Level progress -->
+  <div class="level-section card" style="padding:18px 20px;">
+    <div class="level-info">
+      <span class="level-name" id="homeLevelName">⭐ Yangi boshlovchi</span>
+      <span class="level-xp-needed" id="homeLevelXP">0 / 100 XP</span>
+    </div>
+    <div class="level-bar-wrap">
+      <div class="level-bar" id="homeLevelBar" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div id="streakBanner" class="streak-banner">
+    <div class="streak-info">
+      <div class="streak-flame">🔥</div>
+      <div class="streak-text">
+        <h3 id="streakTitle">Bugun o'qing!</h3>
+        <p id="streakSub">Har kuni kirish streakingizni saqlaydi</p>
+      </div>
+    </div>
+    <div class="streak-days" id="streakDays"></div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-num" id="statXP">0</div><div class="stat-label">XP Ball</div></div>
+    <div class="stat-box"><div class="stat-num" id="statStreak">0</div><div class="stat-label">🔥 Streak</div></div>
+    <div class="stat-box"><div class="stat-num" id="statLearned">0</div><div class="stat-label">So'zlar</div></div>
+    <div class="stat-box"><div class="stat-num" id="statQuiz">0</div><div class="stat-label">To'g'ri</div></div>
+  </div>
+
+  <!-- Daily Tasks -->
+  <div class="card">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:12px;">📋 Kunlik Vazifalar</div>
+    <div id="dailyTasksList"></div>
+    <div id="dailyTasksComplete" style="display:none;text-align:center;padding:10px;background:rgba(26,122,110,0.1);border-radius:12px;color:var(--teal);font-weight:800;">
+      🎉 Bugungi barcha vazifalar bajarildi! +30 XP bonus!
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:800;font-size:1rem;margin-bottom:12px;">⚡ Tezkor boshlash</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;">
+      <button class="btn btn-gold" onclick="showTab('alphabet',null)">🔤 Alifbo o'rgan</button>
+      <button class="btn btn-teal" onclick="showTab('flashcard',null)">🃏 Flashcard</button>
+      <button class="btn btn-outline" onclick="showTab('voice',null)">🎙️ Talaffuz</button>
+      <button class="btn btn-outline" onclick="showTab('quiz',null)">🎯 Test yech</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:10px;">📖 Kunlik gap</div>
+    <div style="font-family:'Amiri',serif;font-size:2rem;text-align:right;direction:rtl;color:var(--deep);margin-bottom:8px;" id="dailyArabic">كيف حالك؟</div>
+    <div style="color:var(--teal);font-weight:700;" id="dailyUz">Ahvolingiz qanday?</div>
+    <div style="color:#aaa;font-size:0.82rem;font-style:italic;margin-top:4px;" id="dailyPr">kayfa ḥāluk?</div>
+    <button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="speakArabic(document.getElementById('dailyArabic').textContent)">🔊 Eshit</button>
+  </div>
+</div>
+
+<!-- ALPHABET TAB -->
+<div class="tab-content" id="tab-alphabet">
+  <div class="section-title"><span>🔤</span> Arab Alifbosi (28 harf)</div>
+  <div id="letterDetail" class="letter-detail">
+    <div class="detail-big" id="detailLetter">ا</div>
+    <div class="detail-info">
+      <div class="detail-box"><div class="label">Nomi</div><div class="value latin" id="detailName">Alif</div></div>
+      <div class="detail-box"><div class="label">Tovush</div><div class="value latin" id="detailSound">a / ā</div></div>
+      <div class="detail-box"><div class="label">Misol</div><div class="value" id="detailExample">أَب</div></div>
+    </div>
+    <div class="stroke-canvas-wrap">
+      <div style="font-size:0.76rem;color:rgba(255,255,255,0.5);margin-bottom:7px;">✍️ Harfni chizing:</div>
+      <canvas class="stroke-canvas" id="drawCanvas" width="220" height="120"></canvas>
+    </div>
+    <div class="stroke-controls">
+      <button class="btn btn-gold btn-sm" onclick="speakArabic(currentLetter.letter)">🔊 Eshit</button>
+      <button class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="clearCanvas()">🗑️ O'chir</button>
+      <button class="btn btn-teal btn-sm" onclick="markLearned()">✅ O'rgandim</button>
+    </div>
+  </div>
+  <div class="alphabet-grid" id="alphabetGrid"></div>
+</div>
+
+<!-- WORDS TAB -->
+<div class="tab-content" id="tab-words">
+  <div class="section-title"><span>📚</span> Asosiy So'zlar</div>
+  <div class="card" style="margin-bottom:14px;">
+    <div class="search-wrap" style="margin-bottom:10px;">
+      <input class="search-input" id="wordSearch" type="text" placeholder="🔍 So'z qidirish..." oninput="renderWords()">
+    </div>
+    <select id="categorySelect" onchange="renderWords()">
+      <option value="all">📚 Hammasi</option>
+      <option value="greetings">👋 Salomlashish</option>
+      <option value="numbers">🔢 Sonlar</option>
+      <option value="family">👨‍👩‍👧 Oila</option>
+      <option value="colors">🎨 Ranglar</option>
+      <option value="food">🍎 Ovqat</option>
+      <option value="body">🫀 Tana a'zolari</option>
+      <option value="professions">💼 Kasblar</option>
+      <option value="animals">🐪 Hayvonlar</option>
+      <option value="transport">🚗 Transport</option>
+      <option value="time">🕐 Vaqt</option>
+      <option value="places">🏠 Joylar</option>
+      <option value="favorites">❤️ Sevimlilar</option>
+    </select>
+  </div>
+  <div class="words-grid" id="wordsGrid"></div>
+</div>
+
+<!-- SENTENCES TAB -->
+<div class="tab-content" id="tab-sentences">
+  <div class="section-title"><span>💬</span> Jumlalar va Dialoglar</div>
+  <div class="card" style="margin-bottom:14px;">
+    <select id="sentenceCat" onchange="renderSentences()">
+      <option value="basic">🗣️ Asosiy jumlalar</option>
+      <option value="greet">👋 Salomlashish dialogi</option>
+      <option value="shop">🛒 Do'konda</option>
+      <option value="cafe">☕ Kafeda</option>
+      <option value="street">🗺️ Ko'chada yo'l so'rash</option>
+      <option value="quran">📖 Qur'on so'zlari</option>
+    </select>
+  </div>
+  <div id="sentencesList"></div>
+</div>
+
+<!-- FLASHCARD TAB -->
+<div class="tab-content" id="tab-flashcard">
+  <div class="section-title"><span>🃏</span> Flashcard
+    <span id="srsInfo" class="srs-badge srs-review" style="font-size:0.7rem;">SRS aktiv</span>
+  </div>
+  <div class="fc-counter">
+    <span class="fc-counter-num" id="fcCurrent">1</span>
+    <span class="fc-counter-total" id="fcTotal"> / 20</span>
+  </div>
+  <div class="fc-progress"><div class="fc-progress-bar" id="fcProgressBar" style="width:5%"></div></div>
+  <div class="flashcard-wrap">
+    <div class="flashcard" id="flashcard" onclick="flipCard()">
+      <div class="fc-front">
+        <div class="fc-arabic" id="fcArabic">مرحبا</div>
+        <div class="fc-hint" id="fcCategory">salomlashish</div>
+        <div class="fc-tap">👆 bosib tarjimasini ko'ring</div>
+      </div>
+      <div class="fc-back">
+        <div class="fc-uz" id="fcUz">Salom</div>
+        <div class="fc-pronun" id="fcPronun">marhaban</div>
+        <div class="fc-tap">Bilasizmi?</div>
+      </div>
+    </div>
+  </div>
+  <div class="fc-result-row" id="fcResultRow" style="display:none;">
+    <button class="btn btn-outline" onclick="fcAnswer(false)">😓 Bilmadim</button>
+    <button class="btn btn-teal" onclick="fcAnswer(true)">✅ Bildim!</button>
+  </div>
+  <div style="text-align:center;margin-top:10px;color:#aaa;font-size:0.8rem;" id="fcFlipHint">Bosib oching, keyin javob bering</div>
+  <div class="card" style="margin-top:18px;">
+    <div style="font-weight:800;margin-bottom:10px;font-size:0.93rem;">Mavzu tanlang:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;">
+      <button class="topic-chip" onclick="startFlashcard('all')">📚 Hammasi</button>
+      <button class="topic-chip" onclick="startFlashcard('srs')">🔁 Takrorlash (SRS)</button>
+      <button class="topic-chip" onclick="startFlashcard('greetings')">👋 Salomlashish</button>
+      <button class="topic-chip" onclick="startFlashcard('numbers')">🔢 Sonlar</button>
+      <button class="topic-chip" onclick="startFlashcard('family')">👨‍👩‍👧 Oila</button>
+      <button class="topic-chip" onclick="startFlashcard('alphabet')">🔤 Harflar</button>
+      <button class="topic-chip" onclick="startFlashcard('favorites')">❤️ Sevimlilar</button>
+    </div>
+  </div>
+</div>
+
+<!-- VOICE TAB -->
+<div class="tab-content" id="tab-voice">
+  <div class="section-title"><span>🎙️</span> Talaffuz Mashqi</div>
+  <div class="card">
+    <p style="text-align:center;color:#888;font-size:0.86rem;margin-bottom:4px;">Quyidagi so'zni arabcha talaffuz qiling:</p>
+    <div class="voice-target" id="voiceTarget">مرحبا</div>
+    <div class="voice-hint" id="voiceHint">marhaban — "Salom"</div>
+    <div class="voice-wrap">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()">🎤</button>
+      <p style="margin-top:9px;color:#aaa;font-size:0.78rem;" id="micStatus">Bosing va gapiring</p>
+    </div>
+    <div class="voice-feedback" id="voiceFeedback"></div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;">
+      <button class="btn btn-gold btn-sm" onclick="speakArabic(voiceWords[voiceIdx].ar)">🔊 Namuna eshit</button>
+      <button class="btn btn-outline btn-sm" onclick="nextVoiceWord()">⏭️ Keyingisi</button>
+    </div>
+    <div style="margin-top:14px;">
+      <div style="font-size:0.76rem;color:#aaa;text-align:center;margin-bottom:7px;">Natijalar:</div>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <div style="text-align:center;"><div style="font-size:1.3rem;font-weight:800;color:var(--teal);" id="voiceCorrect">0</div><div style="font-size:0.7rem;color:#aaa;">To'g'ri</div></div>
+        <div style="text-align:center;"><div style="font-size:1.3rem;font-weight:800;color:var(--rose);" id="voiceWrong">0</div><div style="font-size:0.7rem;color:#aaa;">Noto'g'ri</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ TAB -->
+<div class="tab-content" id="tab-quiz">
+  <div class="section-title"><span>🎯</span> Bilimingizni Sinang</div>
+  <div class="score-display">
+    <div class="score-num" id="quizScore">0</div>
+    <div class="score-label">To'g'ri javoblar</div>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+      <button class="topic-chip" onclick="setQuizMode('words');nextQuiz()" id="qmWords" style="background:var(--gold);color:var(--deep);">📚 So'zlar</button>
+      <button class="topic-chip" onclick="setQuizMode('alphabet');nextQuiz()" id="qmAlpha">🔤 Harflar</button>
+      <button class="topic-chip" onclick="setQuizMode('mixed');nextQuiz()" id="qmMixed">🎲 Aralash</button>
+    </div>
+    <p style="text-align:center;color:#888;margin-bottom:12px;font-size:0.86rem;" id="quizModeLabel">Bu arabcha so'zning tarjimasi nima?</p>
+    <div class="quiz-question" id="quizQuestion">مرحبا</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-result" id="quizResult"></div>
+    <button class="btn btn-gold" id="nextBtn" onclick="nextQuiz()" style="display:none;margin:14px auto 0;">Keyingisi →</button>
+  </div>
+</div>
+
+<!-- STATS TAB -->
+<div class="tab-content" id="tab-stats">
+  <div class="section-title"><span>📊</span> O'rganish Statistikasi</div>
+
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-num" id="st-xp">0</div><div class="stat-label">Jami XP</div></div>
+    <div class="stat-box"><div class="stat-num" id="st-streak">0</div><div class="stat-label">🔥 Streak</div></div>
+    <div class="stat-box"><div class="stat-num" id="st-words">0</div><div class="stat-label">So'zlar</div></div>
+    <div class="stat-box"><div class="stat-num" id="st-sessions">0</div><div class="stat-label">Sessiyalar</div></div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">📅 So'nggi 7 kun XP</div>
+    <div class="bar-chart" id="barChart"></div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">🎯 O'rganish darajasi</div>
+    <div class="progress-ring-wrap" id="ringWrap"></div>
+  </div>
+
+  <!-- Level info -->
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:14px;">⭐ Daraja tizimi</div>
+    <div id="levelsList"></div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:14px;">🏆 Liderlar jadvali</div>
+    <div id="leaderboard"></div>
+  </div>
+
+  <!-- Achievements -->
+  <div class="card">
+    <div style="font-weight:800;margin-bottom:14px;">🏅 Yutuqlar</div>
+    <div id="achievementsList"></div>
+  </div>
+</div>
+
+<!-- CHAT TAB -->
+<div class="tab-content" id="tab-chat">
+  <div class="section-title"><span>🤖</span> AI Arab Tili Ustozi</div>
+  <div class="chat-wrap">
+    <div class="chat-header">
+      <div class="ai-dot"></div>
+      <span>Ustoz Claude — Arab tili mutaxassisi</span>
+    </div>
+    <div class="quick-topics">
+      <button class="topic-chip" onclick="sendQuick('Arabcha salomlashishni o\'rgat')">👋 Salom</button>
+      <button class="topic-chip" onclick="sendQuick('Arabcha grammatikani tushuntir')">📖 Grammatika</button>
+      <button class="topic-chip" onclick="sendQuick('Arabcha harflarni qanday yozaman?')">✍️ Yozish</button>
+      <button class="topic-chip" onclick="sendQuick('Arabcha gap qurishni o\'rgat')">💬 Gaplar</button>
+      <button class="topic-chip" onclick="sendQuick('Arabcha sonlarni o\'rgat')">🔢 Sonlar</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="msg ai">
+        Assalomu alaykum! 👋 Men sizning arab tili ustozingizman.<br>
+        So'rash, o'rganish, mashq qilish — barchasiga tayyorman!
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" type="text" placeholder="Savolingizni yozing..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ===================== DATA =====================
+const ALPHABET = [
+  {letter:'ا',name:'Alif',sound:'a / ā',example:'أَب (ota)'},
+  {letter:'ب',name:'Ba',sound:'b',example:'بَيت (uy)'},
+  {letter:'ت',name:'Ta',sound:'t',example:'تُفَّاح (olma)'},
+  {letter:'ث',name:'Sa',sound:'th',example:'ثَوب (kiyim)'},
+  {letter:'ج',name:'Jim',sound:'j',example:'جَمَل (tuya)'},
+  {letter:'ح',name:'Ha',sound:'ḥ',example:'حَيَوَان (hayvon)'},
+  {letter:'خ',name:'Xo',sound:'kh',example:'خُبز (non)'},
+  {letter:'د',name:'Dal',sound:'d',example:'دَرس (dars)'},
+  {letter:'ذ',name:'Zal',sound:'dh',example:'ذَهَب (oltin)'},
+  {letter:'ر',name:'Ra',sound:'r',example:'رَجُل (erkak)'},
+  {letter:'ز',name:'Zay',sound:'z',example:'زَيت (moy)'},
+  {letter:'س',name:'Sin',sound:'s',example:'سَمَك (baliq)'},
+  {letter:'ش',name:'Shin',sound:'sh',example:'شَمس (quyosh)'},
+  {letter:'ص',name:'Sod',sound:'ṣ',example:'صَبر (sabr)'},
+  {letter:'ض',name:'Dod',sound:'ḍ',example:'ضَوء (nur)'},
+  {letter:'ط',name:'To',sound:'ṭ',example:'طَفل (bola)'},
+  {letter:'ظ',name:'Zo',sound:'ẓ',example:'ظِل (soya)'},
+  {letter:'ع',name:'Ayn',sound:'ʿ',example:'عَيْن (ko\'z)'},
+  {letter:'غ',name:'G\'ayn',sound:'gh',example:'غُرفة (xona)'},
+  {letter:'ف',name:'Fa',sound:'f',example:'فَم (og\'iz)'},
+  {letter:'ق',name:'Qof',sound:'q',example:'قَلب (yurak)'},
+  {letter:'ك',name:'Kof',sound:'k',example:'كِتَاب (kitob)'},
+  {letter:'ل',name:'Lam',sound:'l',example:'لَيل (tun)'},
+  {letter:'م',name:'Mim',sound:'m',example:'مَاء (suv)'},
+  {letter:'ن',name:'Nun',sound:'n',example:'نَهر (daryo)'},
+  {letter:'ه',name:'Ha',sound:'h',example:'هَواء (havo)'},
+  {letter:'و',name:'Waw',sound:'w / ū',example:'وَلَد (bola)'},
+  {letter:'ي',name:'Ya',sound:'y / ī',example:'يَد (qo\'l)'},
+];
+
+const WORDS = {
+  greetings: [
+    {ar:'مرحبا',uz:'Salom',pr:'marhaban'},
+    {ar:'السلام عليكم',uz:'Assalomu alaykum',pr:'as-salāmu ʿalaykum'},
+    {ar:'شكراً',uz:'Rahmat',pr:'shukran'},
+    {ar:'نعم',uz:'Ha',pr:'naʿam'},
+    {ar:'لا',uz:"Yo'q",pr:'lā'},
+    {ar:'من فضلك',uz:'Iltimos',pr:'min faḍlik'},
+    {ar:'أهلاً',uz:'Xush kelibsiz',pr:'ahlan'},
+    {ar:'مع السلامة',uz:'Xayr',pr:'maʿa s-salāma'},
+    {ar:'صباح الخير',uz:'Xayrli tong',pr:'ṣabāḥ al-khayr'},
+    {ar:'مساء الخير',uz:'Xayrli kech',pr:'masāʾ al-khayr'},
+  ],
+  numbers: [
+    {ar:'واحد',uz:'Bir (1)',pr:'wāḥid'},
+    {ar:'اثنان',uz:'Ikki (2)',pr:'ithnān'},
+    {ar:'ثلاثة',uz:'Uch (3)',pr:'thalātha'},
+    {ar:'أربعة',uz:"To'rt (4)",pr:'arbaʿa'},
+    {ar:'خمسة',uz:'Besh (5)',pr:'khamsa'},
+    {ar:'ستة',uz:'Olti (6)',pr:'sitta'},
+    {ar:'سبعة',uz:'Yetti (7)',pr:'sabʿa'},
+    {ar:'ثمانية',uz:'Sakkiz (8)',pr:'thamāniya'},
+    {ar:'تسعة',uz:"To'qqiz (9)",pr:'tisʿa'},
+    {ar:'عشرة',uz:"O'n (10)",pr:'ʿashara'},
+    {ar:'عشرون',uz:"Yigirma (20)",pr:'ʿishrūn'},
+    {ar:'مئة',uz:"Yuz (100)",pr:'miʾa'},
+  ],
+  family: [
+    {ar:'أب',uz:'Ota',pr:'ab'},
+    {ar:'أم',uz:'Ona',pr:'umm'},
+    {ar:'أخ',uz:'Aka/Uka',pr:'akh'},
+    {ar:'أخت',uz:'Opa/Singil',pr:'ukht'},
+    {ar:'ابن',uz:"O'g'il",pr:'ibn'},
+    {ar:'بنت',uz:'Qiz',pr:'bint'},
+    {ar:'جد',uz:'Bobo',pr:'jadd'},
+    {ar:'جدة',uz:'Buvi',pr:'jadda'},
+    {ar:'زوج',uz:'Er',pr:'zawj'},
+    {ar:'زوجة',uz:'Xotin',pr:'zawja'},
+  ],
+  colors: [
+    {ar:'أحمر',uz:'Qizil',pr:'aḥmar'},
+    {ar:'أزرق',uz:"Ko'k",pr:'azraq'},
+    {ar:'أخضر',uz:'Yashil',pr:'akhḍar'},
+    {ar:'أصفر',uz:'Sariq',pr:'aṣfar'},
+    {ar:'أبيض',uz:'Oq',pr:'abyaḍ'},
+    {ar:'أسود',uz:'Qora',pr:'aswad'},
+    {ar:'برتقالي',uz:"To'q sariq",pr:'burtuqālī'},
+    {ar:'بنفسجي',uz:'Binafsha',pr:'banafsajī'},
+    {ar:'وردي',uz:'Pushti',pr:'wardī'},
+    {ar:'بني',uz:'Jigarrang',pr:'bunnī'},
+  ],
+  food: [
+    {ar:'خبز',uz:'Non',pr:'khubz'},
+    {ar:'ماء',uz:'Suv',pr:'māʾ'},
+    {ar:'لحم',uz:"Go'sht",pr:'laḥm'},
+    {ar:'تفاح',uz:'Olma',pr:'tuffāḥ'},
+    {ar:'أرز',uz:'Guruch',pr:'aruzz'},
+    {ar:'حليب',uz:'Sut',pr:'ḥalīb'},
+    {ar:'بيض',uz:'Tuxum',pr:'bayḍ'},
+    {ar:'سمك',uz:'Baliq',pr:'samak'},
+    {ar:'شاي',uz:'Choy',pr:'shāy'},
+    {ar:'قهوة',uz:'Qahva',pr:'qahwa'},
+  ],
+  body: [
+    {ar:'رأس',uz:'Bosh',pr:'raʾs'},
+    {ar:'عين',uz:"Ko'z",pr:'ʿayn'},
+    {ar:'أذن',uz:'Quloq',pr:'udhun'},
+    {ar:'أنف',uz:'Burun',pr:'anf'},
+    {ar:'فم',uz:"Og'iz",pr:'fam'},
+    {ar:'يد',uz:"Qo'l",pr:'yad'},
+    {ar:'قلب',uz:'Yurak',pr:'qalb'},
+    {ar:'رجل',uz:'Oyoq',pr:'rijl'},
+  ],
+  professions: [
+    {ar:'طبيب',uz:'Shifokor',pr:'ṭabīb'},
+    {ar:'معلم',uz:"O'qituvchi",pr:'muʿallim'},
+    {ar:'مهندس',uz:'Muhandis',pr:'muhandis'},
+    {ar:'طالب',uz:"Talaba/O'quvchi",pr:'ṭālib'},
+    {ar:'تاجر',uz:'Savdogar',pr:'tājir'},
+    {ar:'فلاح',uz:'Dehqon',pr:'fallāḥ'},
+    {ar:'جندي',uz:'Askar',pr:'jundī'},
+    {ar:'قاضي',uz:'Qozi',pr:'qāḍī'},
+    {ar:'شرطي',uz:'Politsiyachi',pr:'shurṭī'},
+    {ar:'مزارع',uz:"Bog'bon",pr:'muzāriʿ'},
+  ],
+  animals: [
+    {ar:'جمل',uz:'Tuya',pr:'jamal'},
+    {ar:'حصان',uz:'Ot',pr:'ḥiṣān'},
+    {ar:'كلب',uz:'It',pr:'kalb'},
+    {ar:'قطة',uz:'Mushuk',pr:'qiṭṭa'},
+    {ar:'أسد',uz:'Sher',pr:'asad'},
+    {ar:'فيل',uz:'Fil',pr:'fīl'},
+    {ar:'نمر',uz:'Yo\'lbars',pr:'namir'},
+    {ar:'طير',uz:'Qush',pr:'ṭayr'},
+    {ar:'سمك',uz:'Baliq',pr:'samak'},
+    {ar:'نحلة',uz:'Ari',pr:'naḥla'},
+  ],
+  transport: [
+    {ar:'سيارة',uz:'Mashina',pr:'sayyāra'},
+    {ar:'حافلة',uz:'Avtobus',pr:'ḥāfila'},
+    {ar:'قطار',uz:'Poyezd',pr:'qiṭār'},
+    {ar:'طيارة',uz:'Samolyot',pr:'ṭayyāra'},
+    {ar:'سفينة',uz:'Kema',pr:'safīna'},
+    {ar:'دراجة',uz:'Velosiped',pr:'darrāja'},
+    {ar:'تاكسي',uz:'Taksi',pr:'tāksī'},
+    {ar:'مترو',uz:'Metro',pr:'mitrū'},
+  ],
+  time: [
+    {ar:'يوم',uz:'Kun',pr:'yawm'},
+    {ar:'ليلة',uz:'Tun',pr:'layla'},
+    {ar:'أسبوع',uz:'Hafta',pr:'usbūʿ'},
+    {ar:'شهر',uz:'Oy',pr:'shahr'},
+    {ar:'سنة',uz:'Yil',pr:'sana'},
+    {ar:'ساعة',uz:'Soat',pr:'sāʿa'},
+    {ar:'صباح',uz:'Ertalab',pr:'ṣabāḥ'},
+    {ar:'مساء',uz:'Kechqurun',pr:'masāʾ'},
+    {ar:'أمس',uz:'Kecha',pr:'ams'},
+    {ar:'غداً',uz:'Ertaga',pr:'ghadan'},
+  ],
+  places: [
+    {ar:'بيت',uz:'Uy',pr:'bayt'},
+    {ar:'مسجد',uz:'Masjid',pr:'masjid'},
+    {ar:'مدرسة',uz:'Maktab',pr:'madrasa'},
+    {ar:'سوق',uz:'Bozor',pr:'sūq'},
+    {ar:'مستشفى',uz:'Kasalxona',pr:'mustashfā'},
+    {ar:'مطعم',uz:'Restoran',pr:'maṭʿam'},
+    {ar:'مطار',uz:'Aeroport',pr:'maṭār'},
+    {ar:'بنك',uz:'Bank',pr:'bank'},
+    {ar:'حديقة',uz:"Bog'",pr:'ḥadīqa'},
+    {ar:'فندق',uz:'Mehmonxona',pr:'funduq'},
+  ],
+  favorites: [],
+};
+
+const SENTENCES = {
+  basic: [
+    {ar:'أنا أتعلم العربية',uz:'Men arabcha o\'rganaman',pr:'anā ataʿallam al-ʿarabiyya'},
+    {ar:'ما اسمك؟',uz:'Ismingiz nima?',pr:'mā ismuk?'},
+    {ar:'اسمي...',uz:'Mening ismim...',pr:'ismī...'},
+    {ar:'كم عمرك؟',uz:'Necha yoshdasiz?',pr:'kam ʿumruk?'},
+    {ar:'أنا بخير',uz:'Men yaxshiman',pr:'anā bikhayr'},
+    {ar:'لا أفهم',uz:'Tushunmayapman',pr:'lā afham'},
+    {ar:'تكلم ببطء من فضلك',uz:'Iltimos, sekin gapiring',pr:'takallam bibuṭʾ min faḍlik'},
+    {ar:'أين الحمام؟',uz:'Hammom qayerda?',pr:'ayna l-ḥammām?'},
+  ],
+  greet: [
+    {ar:'السلام عليكم، كيف حالك؟',uz:'Assalomu alaykum, ahvol qanday?',pr:'as-salāmu ʿalaykum, kayfa ḥāluk?'},
+    {ar:'وعليكم السلام، أنا بخير',uz:'Alaykum assalom, yaxshiman',pr:'wa ʿalaykum as-salām, anā bikhayr'},
+    {ar:'هل أنت جديد هنا؟',uz:'Siz bu yerda yangimiSiz?',pr:'hal anta jadīd hunā?'},
+    {ar:'نعم، أنا أتعلم العربية',uz:'Ha, men arabcha o\'rganaman',pr:'naʿam, anā ataʿallam al-ʿarabiyya'},
+    {ar:'رائع! أنا أساعدك',uz:'Ajoyib! Men sizga yordam beraman',pr:'rāʾiʿ! anā usāʿiduk'},
+  ],
+  shop: [
+    {ar:'كم الثمن؟',uz:'Narxi qancha?',pr:'kam ath-thaman?'},
+    {ar:'هذا غالٍ جداً',uz:'Bu juda qimmat',pr:'hādhā ghālin jiddan'},
+    {ar:'أريد هذا',uz:'Menda bu bor',pr:'urīd hādhā'},
+    {ar:'هل عندك...؟',uz:'Sizda ... bormi?',pr:'hal ʿindak...?'},
+    {ar:'من فضلك، أعطني الفاتورة',uz:'Iltimos, hisob-kitobni bering',pr:'min faḍlik, aʿṭinī l-fātūra'},
+  ],
+  cafe: [
+    {ar:'فنجان قهوة، من فضلك',uz:'Bir piyola qahva, iltimos',pr:'finjān qahwa, min faḍlik'},
+    {ar:'بدون سكر',uz:'Qandsiz',pr:'bidūn sukkar'},
+    {ar:'الحساب، من فضلك',uz:'To\'lovni olib keling, iltimos',pr:'al-ḥisāb, min faḍlik'},
+    {ar:'هذا لذيذ جداً',uz:'Bu juda mazali',pr:'hādhā ladhīdh jiddan'},
+  ],
+  street: [
+    {ar:'أين...؟',uz:'... qayerda?',pr:'ayna...?'},
+    {ar:'امشِ يميناً',uz:"O'ngga yuring",pr:'imshi yamīnan'},
+    {ar:'امشِ يساراً',uz:"Chapga yuring",pr:'imshi yasāran'},
+    {ar:'على طول',uz:'To\'g\'ri boring',pr:'ʿalā ṭūl'},
+    {ar:'كم المسافة؟',uz:'Masofa qancha?',pr:'kam al-masāfa?'},
+  ],
+  quran: [
+    {ar:'بِسْمِ اللهِ الرَّحْمَٰنِ الرَّحِيمِ',uz:'Bismillah ar-Rohman ar-Rohiym',pr:'bismi llāhi r-raḥmāni r-raḥīm'},
+    {ar:'الحمد لله رب العالمين',uz:'Barcha hamdlar Olloh — olamlar Rabbiga',pr:'al-ḥamdu lillāhi rabbi l-ʿālamīn'},
+    {ar:'الله أكبر',uz:'Alloh buyuk',pr:'allāhu akbar'},
+    {ar:'سبحان الله',uz:'Alloh pok',pr:'subḥāna llāh'},
+    {ar:'إن شاء الله',uz:'Alloh xohlasa',pr:'in shāʾa llāh'},
+    {ar:'ما شاء الله',uz:'Alloh nima xohlasa',pr:'mā shāʾa llāh'},
+    {ar:'الحمد لله',uz:'Allohga hamd',pr:'al-ḥamdu lillāh'},
+  ],
+};
+
+const DAILY_PHRASES = [
+  {ar:'كيف حالك؟',uz:'Ahvolingiz qanday?',pr:'kayfa ḥāluk?'},
+  {ar:'أنا بخير',uz:'Men yaxshiman',pr:'anā bikhayr'},
+  {ar:'ما اسمك؟',uz:'Ismingiz nima?',pr:'mā ismuk?'},
+  {ar:'أنا أتعلم العربية',uz:'Men arabcha o\'rganaman',pr:'anā ataʿallam al-ʿarabiyya'},
+  {ar:'شكراً جزيلاً',uz:'Katta rahmat',pr:'shukran jazīlan'},
+  {ar:'مع السلامة',uz:'Xayr, sog\' bo\'ling',pr:'maʿa s-salāma'},
+  {ar:'أين المسجد؟',uz:'Masjid qayerda?',pr:'ayna l-masjid?'},
+];
+
+const LEVELS = [
+  {name:'🌱 Yangi boshlovchi',min:0,max:100,color:'#888'},
+  {name:'📖 O\'quvchi',min:100,max:300,color:'#c9903a'},
+  {name:'⭐ Harakat qiluvchi',min:300,max:600,color:'#e8b96a'},
+  {name:'🔥 Mashqchi',min:600,max:1000,color:'#e67e22'},
+  {name:'💎 Bilimdon',min:1000,max:1800,color:'#1a7a6e'},
+  {name:'🏆 Ustoz',min:1800,max:3000,color:'#9b59b6'},
+  {name:'👑 Arab Tili Ustasi',min:3000,max:99999,color:'#c9903a'},
+];
+
+// ===================== STATE =====================
+let xp = parseInt(localStorage.getItem('arXP') || '0');
+let streak = parseInt(localStorage.getItem('arStreak') || '0');
+let learnedLetters = JSON.parse(localStorage.getItem('arLearned') || '[]');
+let learnedWordsCount = parseInt(localStorage.getItem('arWords') || '0');
+let quizScore = 0; let quizTotal = 0;
+let currentLetter = ALPHABET[0];
+let currentQuiz = null; let quizAnswered = false;
+let sessions = parseInt(localStorage.getItem('arSessions') || '0');
+let weeklyXP = JSON.parse(localStorage.getItem('arWeekly') || '[0,0,0,0,0,0,0]');
+let favorites = JSON.parse(localStorage.getItem('arFavorites') || '[]');
+let srsData = JSON.parse(localStorage.getItem('arSRS') || '{}');
+let userName = localStorage.getItem('arName') || '';
+let darkMode = localStorage.getItem('arDark') === '1';
+let quizMode = 'words';
+let lastLevel = getLevel(xp);
+
+// Daily task state
+let dailyTasks = JSON.parse(localStorage.getItem('arDailyTasks') || 'null');
+const todayStr = new Date().toDateString();
+if(!dailyTasks || dailyTasks.date !== todayStr) {
+  dailyTasks = {
+    date: todayStr,
+    tasks: [
+      {id:'learn5',name:'5 ta so\'z o\'rgan',icon:'📚',xp:10,target:5,progress:0,done:false},
+      {id:'quiz3',name:'3 ta test yech',icon:'🎯',xp:15,target:3,progress:0,done:false},
+      {id:'flashcard5',name:'5 ta flashcard',icon:'🃏',xp:10,target:5,progress:0,done:false},
+      {id:'streak',name:'Bugun kirish',icon:'🔥',xp:5,target:1,progress:0,done:false},
+    ]
+  };
+  // Mark streak task done
+  dailyTasks.tasks[3].progress = 1; dailyTasks.tasks[3].done = true;
+}
+
+// Streak logic
+const today = new Date().toDateString();
+const lastVisit = localStorage.getItem('arLastVisit');
+if(lastVisit !== today) {
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  if(lastVisit === yesterday.toDateString()) streak++;
+  else streak = 1;
+  sessions++;
+  if(lastVisit) { weeklyXP.push(0); weeklyXP.shift(); }
+  localStorage.setItem('arLastVisit', today);
+  localStorage.setItem('arStreak', streak);
+  localStorage.setItem('arSessions', sessions);
+  localStorage.setItem('arWeekly', JSON.stringify(weeklyXP));
+}
+
+function save() {
+  localStorage.setItem('arXP', xp);
+  localStorage.setItem('arLearned', JSON.stringify(learnedLetters));
+  localStorage.setItem('arWords', learnedWordsCount);
+  localStorage.setItem('arFavorites', JSON.stringify(favorites));
+  localStorage.setItem('arSRS', JSON.stringify(srsData));
+  localStorage.setItem('arDailyTasks', JSON.stringify(dailyTasks));
+  weeklyXP[weeklyXP.length-1] = xp;
+  localStorage.setItem('arWeekly', JSON.stringify(weeklyXP));
+}
+
+function getLevel(xpVal) {
+  for(let i=LEVELS.length-1;i>=0;i--) if(xpVal>=LEVELS[i].min) return i;
+  return 0;
+}
+
+function addXP(n) {
+  xp += n;
+  const newLvl = getLevel(xp);
+  if(newLvl > lastLevel) {
+    lastLevel = newLvl;
+    showLevelUp(LEVELS[newLvl].name);
+  }
+  updateHeaderStats();
+  save();
+}
+
+function showLevelUp(name) {
+  const popup = document.getElementById('levelupPopup');
+  popup.textContent = '🎉 Yangi daraja: ' + name;
+  popup.classList.add('show');
+  setTimeout(()=>popup.classList.remove('show'), 3000);
+}
+
+function updateHeaderStats() {
+  const lvl = getLevel(xp);
+  const L = LEVELS[lvl];
+  const pct = ((xp - L.min) / (L.max - L.min) * 100).toFixed(0);
+  document.getElementById('xpBadge').textContent = xp + ' XP';
+  document.getElementById('streakCount').textContent = streak + ' 🔥';
+  document.getElementById('levelBadge').textContent = L.name;
+  ['statXP','st-xp'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=xp;});
+  ['statStreak','st-streak'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=streak;});
+  ['statLearned','st-words'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=learnedWordsCount;});
+  ['statQuiz'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=quizScore;});
+  ['st-sessions'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=sessions;});
+  const lb = document.getElementById('homeLevelBar');
+  if(lb) lb.style.width = Math.min(pct,100)+'%';
+  const ln = document.getElementById('homeLevelName');
+  if(ln) ln.textContent = L.name;
+  const lx = document.getElementById('homeLevelXP');
+  if(lx) lx.textContent = xp + ' / ' + L.max + ' XP';
+}
+
+// ===================== ONBOARDING =====================
+function startApp() {
+  const name = document.getElementById('nameInput').value.trim() || 'O\'rganuvchi';
+  userName = name;
+  localStorage.setItem('arName', name);
+  localStorage.setItem('arOnboarded','1');
+  document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('userName').textContent = name + ' bilan o\'rgan';
+}
+
+// ===================== DARK MODE =====================
+function toggleDark() {
+  darkMode = !darkMode;
+  document.body.classList.toggle('dark', darkMode);
+  document.getElementById('darkBtn').textContent = darkMode ? '☀️' : '🌙';
+  localStorage.setItem('arDark', darkMode?'1':'0');
+}
+
+// ===================== HOME =====================
+function initHome() {
+  const ph = DAILY_PHRASES[new Date().getDay() % DAILY_PHRASES.length];
+  document.getElementById('dailyArabic').textContent = ph.ar;
+  document.getElementById('dailyUz').textContent = ph.uz;
+  document.getElementById('dailyPr').textContent = ph.pr;
+
+  const days = ['Yak','Du','Se','Cho','Pa','Ju','Sha'];
+  const todayIdx = new Date().getDay();
+  let html = '';
+  for(let i=0;i<7;i++) {
+    const isToday = i===todayIdx;
+    const done = i < todayIdx;
+    html += `<div class="streak-day ${isToday?'today':done?'done':''}">${days[i]}</div>`;
+  }
+  document.getElementById('streakDays').innerHTML = html;
+  document.getElementById('streakTitle').textContent = streak>=3?`🔥 ${streak} kunlik streak!`:streak===1?'Birinchi kun!':'Bugun o\'qing!';
+  document.getElementById('streakSub').textContent = streak>=7?'Ajoyib! Haftalik streak!':streak>=3?`${streak} kun ketma-ket. Davom eting!`:'Har kuni kirish streakingizni saqlaydi';
+
+  renderDailyTasks();
+}
+
+function renderDailyTasks() {
+  const allDone = dailyTasks.tasks.every(t=>t.done);
+  document.getElementById('dailyTasksComplete').style.display = allDone ? 'block' : 'none';
+  document.getElementById('dailyTasksList').innerHTML = dailyTasks.tasks.map(t => `
+    <div class="task-item ${t.done?'done':''}">
+      <div class="task-icon">${t.icon}</div>
+      <div class="task-text">
+        <div class="task-name">${t.name}</div>
+        <div class="task-xp">+${t.xp} XP · ${t.progress}/${t.target}</div>
+        <div class="task-progress-wrap"><div class="task-progress-bar" style="width:${Math.min(t.progress/t.target*100,100)}%"></div></div>
+      </div>
+      <div class="task-check">${t.done?'✅':'⬜'}</div>
+    </div>
+  `).join('');
+}
+
+function updateTask(id, inc=1) {
+  const t = dailyTasks.tasks.find(t=>t.id===id);
+  if(!t||t.done) return;
+  t.progress = Math.min(t.progress+inc, t.target);
+  if(t.progress>=t.target && !t.done) {
+    t.done=true; addXP(t.xp);
+    // Check all done bonus
+    if(dailyTasks.tasks.every(x=>x.done)) { addXP(30); }
+  }
+  renderDailyTasks();
+  save();
+}
+
+// ===================== ALPHABET =====================
+function renderAlphabet() {
+  const grid = document.getElementById('alphabetGrid');
+  grid.innerHTML = ALPHABET.map((l,i)=>`
+    <div class="letter-card ${learnedLetters.includes(i)?'learned':''}" onclick="showLetter(${i})" id="lcard-${i}">
+      <span class="letter-arabic">${l.letter}</span>
+      <div class="letter-name">${l.name}</div>
+      <div class="letter-check">${learnedLetters.includes(i)?'✅':''}</div>
+    </div>
+  `).join('');
+}
+
+function showLetter(i) {
+  document.querySelectorAll('.letter-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('lcard-'+i).classList.add('active');
+  currentLetter = ALPHABET[i];
+  document.getElementById('detailLetter').textContent = currentLetter.letter;
+  document.getElementById('detailName').textContent = currentLetter.name;
+  document.getElementById('detailSound').textContent = currentLetter.sound;
+  document.getElementById('detailExample').textContent = currentLetter.example.split(' ')[0];
+  document.getElementById('letterDetail').classList.add('show');
+  clearCanvas();
+  addXP(2);
+}
+
+function markLearned() {
+  const i = ALPHABET.indexOf(currentLetter);
+  if(!learnedLetters.includes(i)) {
+    learnedLetters.push(i);
+    learnedWordsCount++;
+    addXP(10);
+    renderAlphabet();
+    save();
+    updateTask('learn5');
+  }
+}
+
+// ===================== CANVAS =====================
+let isDrawing=false, ctx;
+function initCanvas() {
+  const canvas = document.getElementById('drawCanvas');
+  ctx = canvas.getContext('2d');
+  ctx.strokeStyle='#c9903a'; ctx.lineWidth=3; ctx.lineCap='round'; ctx.lineJoin='round';
+  canvas.addEventListener('mousedown',e=>{isDrawing=true;ctx.beginPath();ctx.moveTo(...getPos(e,canvas));});
+  canvas.addEventListener('mousemove',e=>{if(!isDrawing)return;ctx.lineTo(...getPos(e,canvas));ctx.stroke();});
+  canvas.addEventListener('mouseup',()=>isDrawing=false);
+  canvas.addEventListener('mouseleave',()=>isDrawing=false);
+  canvas.addEventListener('touchstart',e=>{e.preventDefault();isDrawing=true;ctx.beginPath();ctx.moveTo(...getPos(e.touches[0],canvas));},{passive:false});
+  canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!isDrawing)return;ctx.lineTo(...getPos(e.touches[0],canvas));ctx.stroke();},{passive:false});
+  canvas.addEventListener('touchend',()=>isDrawing=false);
+}
+
+function getPos(e,canvas){const r=canvas.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top];}
+function clearCanvas(){
+  if(!ctx)return;
+  const canvas=document.getElementById('drawCanvas');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();ctx.font='80px Amiri, serif';ctx.fillStyle='rgba(201,144,58,0.12)';
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(currentLetter.letter,110,60);ctx.restore();
+}
+
+// ===================== WORDS =====================
+function getAllWords(){return Object.entries(WORDS).filter(([k])=>k!=='favorites').map(([,v])=>v).flat();}
+
+function getFavoriteWords(){
+  const all=getAllWords();
+  return all.filter(w=>favorites.includes(w.ar));
+}
+
+function toggleFavorite(ar, event) {
+  event.stopPropagation();
+  const idx = favorites.indexOf(ar);
+  if(idx>-1) favorites.splice(idx,1); else favorites.push(ar);
+  save();
+  renderWords();
+}
+
+function renderWords() {
+  const cat = document.getElementById('categorySelect').value;
+  const search = (document.getElementById('wordSearch').value||'').toLowerCase().trim();
+  let list = cat==='favorites' ? getFavoriteWords() : (cat==='all' ? getAllWords() : (WORDS[cat]||[]));
+  if(search) list = list.filter(w=>w.uz.toLowerCase().includes(search)||w.ar.includes(search)||w.pr.toLowerCase().includes(search));
+  document.getElementById('wordsGrid').innerHTML = list.length ? list.map(w=>`
+    <div class="word-card ${favorites.includes(w.ar)?'favorited':''}" onclick="speakArabic('${w.ar.replace(/'/g,"\\'")}');addXP(1);updateTask('learn5');">
+      <button class="word-fav-btn" onclick="toggleFavorite('${w.ar.replace(/'/g,"\\'")}',event)">${favorites.includes(w.ar)?'❤️':'🤍'}</button>
+      <span class="word-arabic">${w.ar}</span>
+      <div class="word-trans">tarjima</div>
+      <div class="word-uz">${w.uz}</div>
+      <div class="word-pronun">${w.pr}</div>
+    </div>
+  `).join('') : '<div style="text-align:center;color:#aaa;padding:30px;">Hech narsa topilmadi</div>';
+}
+
+// ===================== SENTENCES =====================
+function renderSentences() {
+  const cat = document.getElementById('sentenceCat').value;
+  const list = SENTENCES[cat]||[];
+  document.getElementById('sentencesList').innerHTML = list.map(s=>`
+    <div class="sentence-card" onclick="speakArabic('${s.ar.replace(/'/g,"\\'")}');addXP(2);">
+      <div class="sentence-ar">${s.ar}</div>
+      <div class="sentence-uz">${s.uz}</div>
+      <div class="sentence-pr">${s.pr}</div>
+    </div>
+  `).join('');
+}
+
+// ===================== FLASHCARD =====================
+let fcDeck=[], fcIdx=0, fcFlipped=false, fcCorrect=0;
+
+function startFlashcard(cat) {
+  if(cat==='srs') {
+    const all=getAllWords();
+    const now=Date.now();
+    fcDeck=all.filter(w=>{
+      const s=srsData[w.ar];
+      if(!s) return true;
+      return now>=s.nextReview;
+    }).sort(()=>Math.random()-0.5);
+    if(!fcDeck.length) fcDeck=[...all].sort(()=>Math.random()-0.5).slice(0,10);
+  } else if(cat==='favorites') {
+    fcDeck=[...getFavoriteWords()].sort(()=>Math.random()-0.5);
+    if(!fcDeck.length){alert('Hali sevimli so\'z yo\'q!');return;}
+  } else if(cat==='all') {
+    fcDeck=[...getAllWords()].sort(()=>Math.random()-0.5);
+  } else if(cat==='alphabet') {
+    fcDeck=ALPHABET.map(l=>({ar:l.letter,uz:l.name+' — '+l.example.split('(')[1]?.replace(')',''),pr:l.sound}));
+  } else {
+    fcDeck=[...(WORDS[cat]||[])].sort(()=>Math.random()-0.5);
+  }
+  fcIdx=0;fcCorrect=0;fcFlipped=false;
+  renderFC();
+}
+
+function renderFC() {
+  if(!fcDeck.length)return;
+  const w=fcDeck[fcIdx];
+  const card=document.getElementById('flashcard');
+  card.classList.remove('flipped');
+  fcFlipped=false;
+  document.getElementById('fcArabic').textContent=w.ar;
+  document.getElementById('fcCategory').textContent=w.pr;
+  document.getElementById('fcUz').textContent=w.uz;
+  document.getElementById('fcPronun').textContent=w.pr;
+  document.getElementById('fcCurrent').textContent=fcIdx+1;
+  document.getElementById('fcTotal').textContent=' / '+fcDeck.length;
+  document.getElementById('fcProgressBar').style.width=((fcIdx+1)/fcDeck.length*100)+'%';
+  document.getElementById('fcResultRow').style.display='none';
+  document.getElementById('fcFlipHint').textContent='Bosib oching, keyin javob bering';
+}
+
+function flipCard() {
+  const card=document.getElementById('flashcard');
+  card.classList.toggle('flipped');
+  fcFlipped=!fcFlipped;
+  if(fcFlipped) {
+    speakArabic(fcDeck[fcIdx].ar);
+    document.getElementById('fcResultRow').style.display='flex';
+    document.getElementById('fcFlipHint').textContent='';
+  }
+}
+
+function fcAnswer(knew) {
+  const w=fcDeck[fcIdx];
+  // SRS update
+  const now=Date.now();
+  const s=srsData[w.ar]||{interval:1,ease:2.5,reviews:0};
+  if(knew) {
+    s.interval=Math.round(s.interval*s.ease);
+    s.ease=Math.min(s.ease+0.1,3.0);
+    fcCorrect++; addXP(5); learnedWordsCount++; save();
+    updateTask('flashcard5');
+  } else {
+    s.interval=1; s.ease=Math.max(s.ease-0.2,1.3); addXP(1);
+  }
+  s.reviews++; s.nextReview=now+s.interval*86400000;
+  srsData[w.ar]=s;
+  fcIdx++;
+  if(fcIdx>=fcDeck.length) {
+    document.getElementById('fcFlipHint').textContent=`✅ Tugadi! ${fcCorrect}/${fcDeck.length} to'g'ri. +${fcCorrect*5} XP`;
+    document.getElementById('fcResultRow').style.display='none';
+    document.getElementById('flashcard').classList.remove('flipped');
+    document.getElementById('fcArabic').textContent='🎉';
+    document.getElementById('fcUz').textContent='Barakalla!';
+    return;
+  }
+  renderFC();
+}
+
+// ===================== VOICE =====================
+const voiceWords=[];
+let voiceIdx=0, recognition=null, voiceCorrectCount=0, voiceWrongCount=0;
+
+function initVoice() {
+  voiceWords.length=0;
+  getAllWords().forEach(w=>voiceWords.push(w));
+  voiceWords.sort(()=>Math.random()-0.5);
+  showVoiceWord();
+  if('SpeechRecognition' in window||'webkitSpeechRecognition' in window) {
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    recognition=new SR();
+    recognition.lang='ar-SA'; recognition.interimResults=false; recognition.maxAlternatives=5;
+    recognition.onresult=e=>{const results=Array.from(e.results[0]).map(r=>r.transcript.trim());handleVoiceResult(results);};
+    recognition.onerror=e=>{document.getElementById('micStatus').textContent='Xatolik: '+e.error;document.getElementById('micBtn').classList.remove('listening');};
+    recognition.onend=()=>{document.getElementById('micBtn').classList.remove('listening');document.getElementById('micStatus').textContent='Bosing va gapiring';};
+  }
+}
+
+function showVoiceWord(){if(!voiceWords.length)return;const w=voiceWords[voiceIdx%voiceWords.length];document.getElementById('voiceTarget').textContent=w.ar;document.getElementById('voiceHint').textContent=w.pr+' — "'+w.uz+'"';document.getElementById('voiceFeedback').classList.remove('show','success','fail');}
+function nextVoiceWord(){voiceIdx++;showVoiceWord();}
+function toggleMic(){if(!recognition){document.getElementById('micStatus').textContent='Brauzer qo\'llmaydi';return;}const btn=document.getElementById('micBtn');if(btn.classList.contains('listening')){recognition.stop();}else{btn.classList.add('listening');document.getElementById('micStatus').textContent='Tinglayapman...';document.getElementById('voiceFeedback').classList.remove('show');recognition.start();}}
+
+function handleVoiceResult(results) {
+  const target=voiceWords[voiceIdx%voiceWords.length];
+  const targetClean=target.ar.replace(/[\u064B-\u065F]/g,'').trim();
+  const heard=results[0];
+  const heardClean=heard.replace(/[\u064B-\u065F]/g,'').trim();
+  const match=results.some(r=>r.replace(/[\u064B-\u065F]/g,'').trim()===targetClean)||similarity(heardClean,targetClean)>0.6;
+  const fb=document.getElementById('voiceFeedback');
+  if(match){fb.textContent='✅ Ajoyib talaffuz! +8 XP';fb.className='voice-feedback show success';voiceCorrectCount++;document.getElementById('voiceCorrect').textContent=voiceCorrectCount;addXP(8);setTimeout(nextVoiceWord,1500);}
+  else{fb.textContent=`🔄 Eshitildi: "${heard}" — yana urining!`;fb.className='voice-feedback show fail';voiceWrongCount++;document.getElementById('voiceWrong').textContent=voiceWrongCount;addXP(1);}
+}
+
+function similarity(a,b){if(a===b)return 1;if(!a||!b)return 0;let longer=a.length>b.length?a:b,shorter=a.length>b.length?b:a;let editD=levenshtein(longer,shorter);return(longer.length-editD)/longer.length;}
+function levenshtein(a,b){const m=[];for(let i=0;i<=b.length;i++)m[i]=[i];for(let j=0;j<=a.length;j++)m[0][j]=j;for(let i=1;i<=b.length;i++)for(let j=1;j<=a.length;j++)m[i][j]=b[i-1]===a[j-1]?m[i-1][j-1]:1+Math.min(m[i-1][j-1],m[i][j-1],m[i-1][j]);return m[b.length][a.length];}
+
+// ===================== QUIZ =====================
+function setQuizMode(mode) {
+  quizMode=mode;
+  ['words','alpha','mixed'].forEach(m=>{
+    const el=document.getElementById('qm'+m.charAt(0).toUpperCase()+m.slice(1));
+    if(el){el.style.background='';el.style.color='';}
+  });
+  const modeMap={words:'qmWords',alphabet:'qmAlpha',mixed:'qmMixed'};
+  const el=document.getElementById(modeMap[mode]);
+  if(el){el.style.background='var(--gold)';el.style.color='var(--deep)';}
+  const labels={words:'Bu arabcha so\'zning tarjimasi nima?',alphabet:'Bu arabcha harfning nomi nima?',mixed:'Tarjimasini toping:'};
+  document.getElementById('quizModeLabel').textContent=labels[mode]||labels.words;
+}
+
+function nextQuiz() {
+  quizAnswered=false;
+  document.getElementById('nextBtn').style.display='none';
+  document.getElementById('quizResult').classList.remove('show','correct','wrong');
+  let pool;
+  if(quizMode==='alphabet') pool=ALPHABET.map(l=>({ar:l.letter,uz:l.name,pr:l.sound}));
+  else if(quizMode==='mixed') pool=[...getAllWords(),...ALPHABET.map(l=>({ar:l.letter,uz:l.name,pr:l.sound}))];
+  else pool=getAllWords();
+  const q=pool[Math.floor(Math.random()*pool.length)];
+  currentQuiz=q;
+  document.getElementById('quizQuestion').textContent=q.ar;
+  let opts=[q.uz];
+  const others=pool.filter(w=>w.uz!==q.uz);
+  while(opts.length<4){const r=others[Math.floor(Math.random()*others.length)];if(!opts.includes(r.uz))opts.push(r.uz);}
+  opts=opts.sort(()=>Math.random()-0.5);
+  document.getElementById('quizOptions').innerHTML=opts.map(o=>`
+    <button class="quiz-opt" onclick="checkQuiz(this,'${o.replace(/'/g,"\\'")}','${q.uz.replace(/'/g,"\\'")}')">
+      ${o}
+    </button>
+  `).join('');
+  updateTask('quiz3');
+}
+
+function checkQuiz(btn,chosen,correct) {
+  if(quizAnswered)return;
+  quizAnswered=true;
+  document.querySelectorAll('.quiz-opt').forEach(b=>{b.disabled=true;if(b.textContent.trim()===correct)b.classList.add('correct');});
+  const res=document.getElementById('quizResult');
+  quizTotal++;
+  if(chosen===correct){btn.classList.add('correct');quizScore++;document.getElementById('quizScore').textContent=quizScore;res.textContent='✅ To\'g\'ri! Ajoyib! +5 XP';res.className='quiz-result show correct';addXP(5);}
+  else{btn.classList.add('wrong');res.textContent=`❌ Noto'g'ri. To'g'ri javob: ${correct}`;res.className='quiz-result show wrong';addXP(1);}
+  document.getElementById('nextBtn').style.display='block';
+  document.getElementById('statQuiz').textContent=quizScore;
+}
+
+// ===================== STATS =====================
+function renderStats() {
+  updateHeaderStats();
+  const days=['Du','Se','Ch','Pa','Ju','Sh','Ya'];
+  const max=Math.max(...weeklyXP,1);
+  document.getElementById('barChart').innerHTML=weeklyXP.map((v,i)=>`
+    <div class="bar-col">
+      <div class="bar-val">${v||''}</div>
+      <div class="bar" style="height:${Math.max(v/max*100,4)}px;${i===weeklyXP.length-1?'background:linear-gradient(to top,var(--gold),var(--gold-light));':''}"></div>
+      <div class="bar-day">${days[i]||''}</div>
+    </div>
+  `).join('');
+
+  const rings=[
+    {label:'Harflar',val:learnedLetters.length,max:28,color:'#c9903a'},
+    {label:'Test',val:quizScore,max:Math.max(quizTotal,1),color:'#1a7a6e'},
+    {label:'Streak',val:Math.min(streak,7),max:7,color:'#e67e22'},
+  ];
+  document.getElementById('ringWrap').innerHTML=rings.map(r=>{
+    const pct=r.val/r.max;const circ=2*Math.PI*36;const dash=circ*(1-pct);
+    return `<div class="ring-item">
+      <svg class="ring" width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="36" fill="none" stroke="#eee" stroke-width="8"/>
+        <circle cx="44" cy="44" r="36" fill="none" stroke="${r.color}" stroke-width="8"
+          stroke-dasharray="${circ}" stroke-dashoffset="${dash}" stroke-linecap="round" transform="rotate(-90 44 44)"/>
+        <text x="44" y="48" text-anchor="middle" font-size="14" font-weight="800" fill="${r.color}">${r.val}</text>
+      </svg>
+      <div class="ring-label">${r.label}</div>
+    </div>`;
+  }).join('');
+
+  // Levels list
+  const curLvl=getLevel(xp);
+  document.getElementById('levelsList').innerHTML=LEVELS.map((l,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(201,144,58,0.1);opacity:${xp>=l.min?1:0.4}">
+      <div style="font-size:1.4rem;width:32px;">${i===curLvl?'👉':xp>=l.min?'✅':'⬜'}</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:0.88rem;color:${l.color}">${l.name}</div>
+        <div style="font-size:0.74rem;color:#aaa;">${l.min} – ${l.max} XP</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Leaderboard (simulated + current user)
+  const mockLeaders=[
+    {name:'Ahmad',xp:2400},
+    {name:'Zulfiya',xp:1850},
+    {name:'Bobur',xp:1200},
+    {name:'Malika',xp:890},
+    {name:'Kamol',xp:640},
+  ];
+  const myEntry={name:userName||'Siz',xp};
+  const all=[...mockLeaders,myEntry].sort((a,b)=>b.xp-a.xp);
+  const medals=['🥇','🥈','🥉'];
+  document.getElementById('leaderboard').innerHTML=all.map((p,i)=>`
+    <div class="leader-item ${p.name===(userName||'Siz')?'me':''}">
+      <div class="leader-rank">${medals[i]||`#${i+1}`}</div>
+      <div class="leader-name">${p.name} ${p.name===(userName||'Siz')?'(Siz)':''}</div>
+      <div class="leader-xp">${p.xp} XP</div>
+    </div>
+  `).join('');
+
+  // Achievements
+  const achievements=[
+    {icon:'🌟',title:'Birinchi kun',desc:'App\'ni ochdingiz',done:true},
+    {icon:'📖',title:'5 harf',desc:'5 ta harf o\'rgandingiz',done:learnedLetters.length>=5},
+    {icon:'🔤',title:'Alifbo ustasi',desc:'28 ta harf o\'rgandingiz',done:learnedLetters.length>=28},
+    {icon:'🔥',title:'3 kun streak',desc:'3 kun ketma-ket',done:streak>=3},
+    {icon:'💯',title:'100 XP',desc:'100 ball yig\'dingiz',done:xp>=100},
+    {icon:'🎯',title:'10 test',desc:'10 ta test to\'g\'ri',done:quizScore>=10},
+    {icon:'❤️',title:'Sevimlilar',desc:'10 ta so\'zni sevimliga qo\'shdingiz',done:favorites.length>=10},
+    {icon:'🔥',title:'7 kun streak',desc:'7 kun ketma-ket o\'qidingiz',done:streak>=7},
+    {icon:'💎',title:'1000 XP',desc:'1000 ball yig\'dingiz',done:xp>=1000},
+    {icon:'👑',title:'Arab Tili Ustasi',desc:'3000 XP yig\'dingiz',done:xp>=3000},
+  ];
+  document.getElementById('achievementsList').innerHTML=achievements.map(a=>`
+    <div class="achievement-item" style="opacity:${a.done?1:0.35}">
+      <div class="ach-icon">${a.icon}</div>
+      <div><div class="ach-title">${a.title} ${a.done?'✅':''}</div><div class="ach-desc">${a.desc}</div></div>
+    </div>
+  `).join('');
+}
+
+// ===================== CHAT =====================
+const chatHistory=[];
+async function sendMsg() {
+  const input=document.getElementById('chatInput');
+  const msg=input.value.trim();
+  if(!msg)return;
+  input.value='';
+  appendMsg(msg,'user');
+  chatHistory.push({role:'user',content:msg});
+  document.getElementById('sendBtn').disabled=true;
+  const typing=showTyping();
+  try {
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:`Siz arab tili o'qituvchisisiz. Foydalanuvchi o'zbek tilida savol beradi.
+Har doim:
+1. O'zbek tilida tushunarli tushuntiring
+2. Arabcha so'zlar/iboralarni yozing (arab yozuvida)
+3. Talaffuzni lotin harflarida ko'rsating
+4. Qisqa va amaliy bo'ling
+5. Rag'batlantiruvchi va do'stona bo'ling
+6. Misollar keltiring`,messages:chatHistory})});
+    const data=await res.json();
+    typing.remove();
+    const reply=data.content?.[0]?.text||'Kechirasiz, xatolik yuz berdi.';
+    chatHistory.push({role:'assistant',content:reply});
+    appendMsg(reply,'ai');
+    addXP(3);
+  } catch(e) {
+    typing.remove();
+    appendMsg('Internet ulanishda xatolik. Qayta urining.','ai');
+  }
+  document.getElementById('sendBtn').disabled=false;
+}
+
+function sendQuick(msg){showTab('chat',null);setTimeout(()=>{document.getElementById('chatInput').value=msg;sendMsg();},100);}
+function appendMsg(text,role){const msgs=document.getElementById('chatMessages');const div=document.createElement('div');div.className=`msg ${role}`;div.innerHTML=role==='ai'?text.replace(/\n/g,'<br>'):text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;}
+function showTyping(){const msgs=document.getElementById('chatMessages');const div=document.createElement('div');div.className='typing';div.innerHTML='<span></span><span></span><span></span>';msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return div;}
+
+// ===================== UTILS =====================
+function speakArabic(text){if(!window.speechSynthesis)return;const utt=new SpeechSynthesisUtterance(text);utt.lang='ar-SA';utt.rate=0.8;window.speechSynthesis.speak(utt);}
+
+function showTab(name,btn) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
+  else{document.querySelectorAll('.tab-btn').forEach(b=>{if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+name+"'"))b.classList.add('active');});}
+  if(name==='stats')renderStats();
+  if(name==='sentences')renderSentences();
+}
+
+// ===================== INIT =====================
+// Dark mode
+if(darkMode){document.body.classList.add('dark');document.getElementById('darkBtn').textContent='☀️';}
+
+// Onboarding
+if(!localStorage.getItem('arOnboarded')){document.getElementById('onboarding').classList.remove('hidden');}
+else{document.getElementById('onboarding').classList.add('hidden');if(userName)document.getElementById('userName').textContent=userName+' bilan o\'rgan';}
+
+updateHeaderStats();
+initHome();
+renderAlphabet();
+renderWords();
+renderSentences();
+nextQuiz();
+initCanvas();
+initVoice();
+startFlashcard('all');
+lastLevel=getLevel(xp);
+
+window.addEventListener('beforeunload',save);
+</script>
+</body>
+</html>
